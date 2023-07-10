@@ -1,20 +1,40 @@
 import argparse
 import os
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
-def main(directory):
-    for file in os.listdir(directory):
-     filename = os.fsdecode(file)
-     if filename.endswith(".md"):
-         filestem =  Path(filename).stem
-         try:
-            datetime_object = datetime.strptime(filestem,'%Y %B')
-         except:
-            continue
 
-         print(datetime_object)
+def main(journal_directory):
+    for file in os.listdir(journal_directory):
+        filename = os.fsdecode(file)
+        if filename.endswith(".md"):
+            file_stem = Path(filename).stem
+            try:
+                datetime_object = datetime.strptime(file_stem, '%Y %B')
+            except:
+                print(f'Skipping file "{file}" as not a journal')
+                continue
 
+            parsefile(os.path.join(journal_directory, file), datetime_object.year, datetime_object.month)
+
+
+def parsefile(file, year, month):
+    with open(file) as f:
+        for line in f:
+            content = line.rstrip()
+            if not content:
+                continue
+            if content[0] == "#":
+                date = content.split('#')[1].strip()
+                if date:
+                    try:
+                        date = datetime.strptime(date, '%d %B %Y')
+                    except:
+                        print(f'{date} is invalid')
+                        date = None
+                        continue
+            else:
+                print(content)
 
 
 if __name__ == "__main__":
