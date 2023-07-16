@@ -1,13 +1,16 @@
 import argparse
 import os
+import time
 from datetime import datetime
 from pathlib import Path
+
+JOURNAL_FILE_EXTENSION = ".md"
 
 
 def main(journal_directory):
     for file in os.listdir(journal_directory):
         filename = os.fsdecode(file)
-        if filename.endswith(".md"):
+        if filename.endswith(JOURNAL_FILE_EXTENSION):
             file_stem = Path(filename).stem
             try:
                 datetime_object = datetime.strptime(file_stem, '%Y %B')
@@ -29,6 +32,7 @@ def parsefile(file, year, month):
                 if date:
                     try:
                         date = datetime.strptime(date, '%d %B %Y')
+                        print(f'date {date.date()}')
                     except:
                         print(f'{date} is invalid')
                         date = None
@@ -47,5 +51,6 @@ if __name__ == "__main__":
     if not os.path.isdir(directory):
         print(f'Given journal path "{directory}" is not a directory')
         exit(1)
-
+    start_time = time.time()
     main(directory)
+    print(f"--- {round(time.time() - start_time, 2)} seconds ---")
