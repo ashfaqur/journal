@@ -4,10 +4,15 @@ import time
 from datetime import datetime
 from pathlib import Path
 
+from journal import analysis
+from journal.day import Day
+from journal.month import Month
+
 JOURNAL_FILE_EXTENSION = ".md"
 
 
 def main(journal_directory):
+    months = []
     for file in os.listdir(journal_directory):
         filename = os.fsdecode(file)
         if filename.endswith(JOURNAL_FILE_EXTENSION):
@@ -18,11 +23,17 @@ def main(journal_directory):
                 print(f'Skipping file "{file}" as not a journal')
                 continue
 
-            parsefile(os.path.join(journal_directory, file), datetime_object.year, datetime_object.month)
+            days = parsefile(os.path.join(journal_directory, file), datetime_object.year, datetime_object.month)
+            month = Month(datetime_object, days)
+            months.append(month)
+
+    analysis.analyze(months)
 
 
 def parsefile(file, year, month):
+    days = []
     with open(file) as f:
+        day = None
         for line in f:
             content = line.rstrip()
             if not content:
@@ -32,13 +43,17 @@ def parsefile(file, year, month):
                 if date:
                     try:
                         date = datetime.strptime(date, '%d %B %Y')
-                        print(f'date {date.date()}')
+                        day = Day(date)
+                        days.append(day)
+                        # print(f'date {day}')
                     except:
                         print(f'{date} is invalid')
                         date = None
                         continue
             else:
-                print(content)
+                if day:
+                    day.add_content(content)
+    return days
 
 
 if __name__ == "__main__":
