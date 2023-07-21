@@ -4,9 +4,9 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from journal import analysis
-from journal.day import Day
-from journal.month import Month
+from model import analysis
+from model.day import Day
+from model.month import Month
 
 JOURNAL_FILE_EXTENSION = ".md"
 
