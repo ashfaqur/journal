@@ -4,7 +4,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from model import analysis
+from model.analysis import analyze
 from model.day import Day
 from model.month import Month
 
@@ -27,7 +27,7 @@ def main(journal_directory):
             month = Month(datetime_object, days)
             months.append(month)
 
-    analysis.analyze(months)
+    analyze(months)
 
 
 def parsefile(file, year, month):
